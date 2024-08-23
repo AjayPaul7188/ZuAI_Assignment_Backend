@@ -5,11 +5,20 @@ const app = express();
 const port = 3001;
 
 app.use(bodyParser.json());
+
+const allowedOrigins = ['http://localhost:3000', 'https://zuai-assignment-frontend.onrender.com'];
+
 app.use(cors({
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-  }));
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
 
 const postsRouter = require('./routes/posts');
 app.use('/posts', postsRouter);
